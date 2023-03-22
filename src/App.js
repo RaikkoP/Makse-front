@@ -1,25 +1,41 @@
-import logo from './logo.svg';
 import './App.css';
+import { useState } from "react"
+import axios from "axios";
 
 function App() {
+  const [paymentLink, setPaymentLink] = useState(null);
+  const [sum, setSum] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.get(`http://localhost:3000/payment/${sum}`);
+      setPaymentLink(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
+    <div>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Sum:
+          <input
+            type="number"
+            value={sum}
+            onChange={(e) => setSum(e.target.value)}
+          />
+        </label>
+        <button type="submit">Pay</button>
+      </form>
+      {paymentLink && (
+        <a href={paymentLink} target="_blank" rel="noopener noreferrer">
+          Click here to pay
         </a>
-      </header>
+      )}
     </div>
   );
-}
+};
 
 export default App;
